@@ -8,7 +8,7 @@ sys.path.append("./")
 import jieba
 import jieba.analyse
 
-import multirprocessing
+import multiprocessing
 
 def cutword_function(parameter):
     line, return_list = parameter
@@ -33,14 +33,14 @@ def cutword_function(parameter):
 
 def curword(file_path):
     new_file_path = file_path + ".cutword"
-    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    pool = multiprocessing.Pool(multiprocessing.cpu_count() * 2)
     wait_write_list = multiprocessing.Manager().list()
-    lines = [(line.strip(), wait_write_list) for line in open(new_file_path, "w").readline()]
-    pool.map(lines)
-    pool.join()
+    lines = [[line.strip(), wait_write_list] for line in open(file_path).readlines()]
+    pool.map_async(cutword_function, lines)
     pool.close()
+    pool.join()
    
-    with open(new_file_path) as fw:
+    with open(new_file_path, "w") as fw:
         for line in wait_write_list:
             fw.write(line + "\n")
 
