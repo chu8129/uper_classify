@@ -8,6 +8,10 @@ sys.path.append("./")
 import json
 import pickle
 import base64
+
+from config.config import COLUMN_SPLIT
+from config.config import ITEM_SPLIT
+
 def format_data(file_path):
     new_file_path = file_path + ".spark"
     with open(file_path) as fr:
@@ -36,9 +40,9 @@ def format_data(file_path):
                     title = video["video_title"]
                     if title:
                         titles.append(title)
-                title_string  = "`|".join(titles)
+                title_string  = ITEM_SPLIT.join(titles)
     
-                new_line = "`!".join(
+                new_line = COLUMN_SPLIT.join(
                     [source, uper, label, uper_name, uper_description, fan_sum, title_string]
                     ).encode("utf8").replace("\n", " \\n ")
     
