@@ -5,7 +5,12 @@
 import sys
 sys.path.append("./")
 
-COLUMN_SPLIT = "`!"
+COLUMN_SPLIT = "`|"
 ITEM_SPLIT = "`|"
 
 WORD_TO_VECTOR_MODEL_FILE_PATH = "data/cn.skipgram.bin"
+TEST_DATA_SIZE_PERCENT = 0.2
+
+# gbdt
+TREE_DEPTH = 300
+N_ESTIMATORS = 10000

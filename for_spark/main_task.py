@@ -9,9 +9,13 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 import pickle
+import multiprocessing
 
 import numpy as np
 
+from config.config import TREE_DEPTH
+from config.config import N_ESTIMATORS
+from config.config import TEST_SIZE_PERCENT
 from config.config import COLUMN_SPLIT
 from config.config import ITEM_SPLIT
 from config.config import WORD_TO_VECTOR_MODEL_FILE_PATH
@@ -88,11 +92,11 @@ def main(file_path):
         x_data.append([source, fan_sum, uper_name, desc_keywords, title_keywords])
     logging.info("read file done")
 
-    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.3,random_state=23) 
+    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=TEST_SIZE_PERCENT, random_state=23) 
     x_train, x_test = transform_data(x_train, x_test)
     logging.info("split data to train and test done")
 
-    gbdt = xgb.XGBClassifier(nthread=24,max_depth=10,learning_rate=0.001,n_estimators=100,gamma=0,)
+    gbdt = xgb.XGBClassifier(nthread=multiprocessing.cpu_count() - 1, max_depth=TREE_DEPTH, learning_rate=0.001, n_estimators=N_ESTIMATORS, gamma=0,)
     #(n_jobs=24,learnning_rate=0.01,n_estimators=80,max_depth=5,gamma=0,)
     logging.info("please wait train")
     gbdt.fit(x_train,y_train)
