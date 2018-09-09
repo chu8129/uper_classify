@@ -5,7 +5,7 @@
 import sys
 sys.path.append("./")
 
-COLUMN_SPLIT = "`|"
+COLUMN_SPLIT = "`!"
 ITEM_SPLIT = "`|"
 
 WORD_TO_VECTOR_MODEL_FILE_PATH = "data/cn.skipgram.bin"
