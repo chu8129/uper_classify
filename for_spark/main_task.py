@@ -100,9 +100,9 @@ def main(file_path):
 
     joblib.dump(gbdt,"model.gbdt")
 
-    y_pred_gbdt = gbdt.predict(np.array(X_test))
+    y_pred_gbdt = gbdt.predict(np.array(x_test))
     with open("result", "w") as fw:
-        fw.write(pickle.dumps(classification_report(y_test_pre,y_pred_gbdt)))
+        fw.write(pickle.dumps(classification_report(y_test,y_pred_gbdt)))
 
     logging.info("add done")
 

@@ -5,6 +5,9 @@
 import sys
 sys.path.append("./")
 
+from config.config import COLUMN_SPLIT
+from config.config import ITEM_SPLIT
+
 import jieba
 import jieba.analyse
 
@@ -14,7 +17,7 @@ def cutword_function(parameter):
     line, return_list = parameter
     line = line.strip().decode("utf8")
     source, uper, label, uper_name, uper_description, fan_sum, title_string = \
-        line.split("`!")
+        line.split(COLUMN_SPLIT)
     desc_keywords = jieba.analyse.textrank(
             uper_description,
             topK=10, 
@@ -29,7 +32,7 @@ def cutword_function(parameter):
         source, uper, label, 
         uper_name, " ".join([word for word,weight in desc_keywords if weight > 0.1]),
         fan_sum, " ".join([word for word,weight in title_keywords if weight > 0.2])]
-    return_list.append("`|".join(line).encode("utf8"))
+    return_list.append(ITEM_SPLIT.join(line).encode("utf8"))
 
 def curword(file_path):
     new_file_path = file_path + ".cutword"
