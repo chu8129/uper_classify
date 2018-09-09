@@ -11,7 +11,7 @@ from config.config import COLUMN_SPLIT
 from config.config import ITEM_SPLIT
 from config.config import WORD_TO_VECTOR_MODEL_FILE_PATH
 
-from read_skipgram_model import read_skipgram_model.py
+from read_skipgram_model import read_skipgram_model
 word2vec_model = read_skipgram_model(WORD_TO_VECTOR_MODEL_FILE_PATH)
 
 from word2vec import word2vec
@@ -57,12 +57,13 @@ def transform_data(x_data_train, x_data_test):
 
 def main(file_path):
     new_file_path = file_path + ".w2v"
-    lines = [line.strip() for line in open(file_path).readlines()]
+    lines = [line for line in open(file_path).readlines()]
 
     y_data = []
     x_data = []
 
     for line in lines:
+        print line.decode("utf8").strip("\n").split(COLUMN_SPLIT)
         source, uper, label, uper_name, desc_keywords, fan_sum, title_keywords = line.decode("utf8").strip("\n").split(COLUMN_SPLIT) 
         y_data.append(label)
         x_data.append(source, fan_sum, uper_name, desc_keywords, title_keywords)
@@ -77,4 +78,7 @@ def main(file_path):
     y_pred_gbdt = gbdt.predict(np.array(X_test))
     with open("result", "w") as fw:
         fw.write(pickle.dumps(classification_report(y_test_pre,y_pred_gbdt)))
+    print "add done"
 
+if __name__ == "__main__":
+    main(sys.argv[1])
