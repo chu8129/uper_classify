@@ -15,7 +15,7 @@ import numpy as np
 
 from config.config import TREE_DEPTH
 from config.config import N_ESTIMATORS
-from config.config import TEST_SIZE_PERCENT
+from config.config import TEST_DATA_SIZE_PERCENT
 from config.config import COLUMN_SPLIT
 from config.config import ITEM_SPLIT
 from config.config import WORD_TO_VECTOR_MODEL_FILE_PATH
@@ -92,23 +92,37 @@ def main(file_path):
         x_data.append([source, fan_sum, uper_name, desc_keywords, title_keywords])
     logging.info("read file done")
 
-    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=TEST_SIZE_PERCENT, random_state=23) 
+    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=TEST_DATA_SIZE_PERCENT, random_state=23) 
     x_train, x_test = transform_data(x_train, x_test)
     logging.info("split data to train and test done")
 
-    gbdt = xgb.XGBClassifier(nthread=multiprocessing.cpu_count() - 1, max_depth=TREE_DEPTH, learning_rate=0.001, n_estimators=N_ESTIMATORS, gamma=0,)
+    gbdt = xgb.XGBClassifier(nthread=multiprocessing.cpu_count()/2 + 5, max_depth=TREE_DEPTH, learning_rate=0.001, n_estimators=N_ESTIMATORS, gamma=0,)
     #(n_jobs=24,learnning_rate=0.01,n_estimators=80,max_depth=5,gamma=0,)
     logging.info("please wait train")
     gbdt.fit(x_train,y_train)
     logging.info("model fit complete")
 
-    joblib.dump(gbdt,"model.gbdt")
-
     y_pred_gbdt = gbdt.predict(np.array(x_test))
     with open("result", "w") as fw:
         fw.write(pickle.dumps(classification_report(y_test,y_pred_gbdt)))
+
+    joblib.dump(gbdt,"model.gbdt")
 
     logging.info("add done")
 
 if __name__ == "__main__":
     main(sys.argv[1])
+
+"""
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
+X_str = np.array([['a', 'dog', 'red'], ['b', 'cat', 'green']])
+# transform to integer
+X_int = LabelEncoder().fit_transform(X_str.ravel()).reshape(*X_str.shape)
+# transform to binary
+X_bin = OneHotEncoder().fit_transform(X_int).toarray()
+
+print(X_bin)
+# [[ 1.  0.  0.  1.  0.  1.]
+#  [ 0.  1.  1.  0.  1.  0.]]
+"""
